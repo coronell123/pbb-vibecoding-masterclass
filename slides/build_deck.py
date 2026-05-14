@@ -2218,7 +2218,7 @@ def s72_the_repo(s):
         s.shapes.add_picture(str(qr), Inches(8.6), Inches(2.9),
                              width=Inches(3.4), height=Inches(3.4))
     add_text(s, Inches(8.4), Inches(6.35), Inches(4.2), Inches(0.3),
-             "github.com/Place-Beyond-Bytes/pbb-vibecoding-masterclass",
+             "github.com/coronell123/pbb-vibecoding-masterclass",
              font=F_CODE, size=9, color=MUTED, align="center")
 
     add_text(s, Inches(0.8), Inches(6.55), Inches(7.5), Inches(0.4),
@@ -2391,7 +2391,7 @@ def s79_resources(s):
     add_text(s, Inches(0.8), Inches(1.05), Inches(12), Inches(1),
              "Resources.", font=F_HEAD, size=44, color=NAVY)
     items = [
-        ("›", "Workshop repo", "github.com/Place-Beyond-Bytes/pbb-vibecoding-masterclass"),
+        ("›", "Workshop repo", "github.com/coronell123/pbb-vibecoding-masterclass"),
         ("›", "Anthropic docs", "code.claude.com/docs/en  ·  the source of truth"),
         ("›", "Anthropic Skilljar (free)", "Claude Code in Action — official video course"),
         ("›", "Cheatsheet", "_handouts/cheatsheet.md — top commands and anti-patterns"),

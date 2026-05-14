@@ -27,7 +27,7 @@ Five steps. In this order. Every time.
    ```
 4. Clone this repo and run the pre-flight:
    ```bash
-   git clone https://github.com/Place-Beyond-Bytes/pbb-vibecoding-masterclass.git
+   git clone https://github.com/coronell123/pbb-vibecoding-masterclass.git
    cd pbb-vibecoding-masterclass
    bash check.sh
    ```
