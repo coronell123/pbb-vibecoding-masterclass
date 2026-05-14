@@ -85,7 +85,10 @@ def add_text(slide, x, y, w, h, text, *,
     return tb
 
 
-def page_chrome(slide, *, page_num, total, label="", bg=CREAM):
+CURRENT_PAGE = 1   # set by main() before each slide builds
+
+
+def page_chrome(slide, *, label="", bg=CREAM, page_num=None, total=None):
     add_rect(slide, 0, 0, SW, SH, bg)
     add_rect(slide, Inches(0.6), SH - Inches(0.65), SW - Inches(1.2), Emu(9525), RULE)
     add_text(slide, Inches(0.6), SH - Inches(0.55), Inches(7), Inches(0.35),
@@ -94,22 +97,33 @@ def page_chrome(slide, *, page_num, total, label="", bg=CREAM):
     if label:
         add_text(slide, Inches(0.6), SH - Inches(0.3), Inches(7), Inches(0.25),
                  label, font=F_BODY, size=8.5, color=NAVY, bold=True, letter_spacing=200)
+    pn = page_num if page_num is not None else CURRENT_PAGE
+    tt = total if total is not None else TOTAL
     add_text(slide, SW - Inches(1.5), SH - Inches(0.5), Inches(0.9), Inches(0.3),
-             f"{page_num:02d} / {total:02d}",
+             f"{pn:02d} / {tt:02d}",
              font=F_CODE, size=9, color=MUTED, align="right")
 
 
-def dark_footer(slide, page_num, total, label_left=""):
+def dark_footer(slide, page_num=None, total=None, label_left=""):
     if label_left:
         add_text(slide, Inches(0.8), Inches(0.9), Inches(12), Inches(0.4),
                  label_left, font=F_BODY, size=11, color=CORAL,
                  bold=True, letter_spacing=400)
+    pn = page_num if page_num is not None else CURRENT_PAGE
+    tt = total if total is not None else TOTAL
     add_text(slide, Inches(0.8), SH - Inches(0.55), Inches(9), Inches(0.35),
              "CHAIR OF SUSTAINABILITY AND INNOVATION IN DIGITAL ECOSYSTEMS  ·  UNIVERSITY OF DUISBURG-ESSEN",
              font=F_BODY, size=8, color=DIM_LIGHT, letter_spacing=120)
     add_text(slide, SW - Inches(1.5), SH - Inches(0.55), Inches(0.9), Inches(0.3),
-             f"{page_num:02d} / {total:02d}",
+             f"{pn:02d} / {tt:02d}",
              font=F_CODE, size=9, color=DIM_LIGHT, align="right")
+
+
+def page_no(slide, light=False):
+    """Bare page-number marker for special-layout slides."""
+    add_text(slide, SW - Inches(1.5), SH - Inches(0.5), Inches(0.9), Inches(0.3),
+             f"{CURRENT_PAGE:02d} / {TOTAL:02d}",
+             font=F_CODE, size=9, color=DIM_LIGHT if light else MUTED, align="right")
 
 
 def code_block(slide, x, y, w, h, lines, *, fg=CODE_FG, bg=CODE_BG, size=14):
@@ -155,7 +169,7 @@ def embed_screenshot(slide, path, x, y, w, h, caption=""):
                  caption, font=F_BODY, size=10, color=MUTED, italic=True)
 
 
-def section_divider(slide, *, page, total, label, title, sub=""):
+def section_divider(slide, *, label, title, sub="", page=None, total=None):
     add_rect(slide, 0, 0, SW, SH, NAVY_DEEP)
     add_text(slide, Inches(0.8), Inches(0.9), Inches(12), Inches(0.4),
              label, font=F_BODY, size=11, color=CORAL,
@@ -171,8 +185,10 @@ def section_divider(slide, *, page, total, label, title, sub=""):
     add_text(slide, Inches(0.8), SH - Inches(0.55), Inches(9), Inches(0.35),
              "CHAIR OF SUSTAINABILITY AND INNOVATION IN DIGITAL ECOSYSTEMS",
              font=F_BODY, size=8, color=DIM_LIGHT, letter_spacing=120)
+    pn = page if page is not None else CURRENT_PAGE
+    tt = total if total is not None else TOTAL
     add_text(slide, SW - Inches(1.5), SH - Inches(0.55), Inches(0.9), Inches(0.3),
-             f"{page:02d} / {total:02d}",
+             f"{pn:02d} / {tt:02d}",
              font=F_CODE, size=9, color=DIM_LIGHT, align="right")
 
 
@@ -240,13 +256,12 @@ def s01_title(s):
     add_text(s, Inches(0.8), SH - Inches(0.75), Inches(8), Inches(0.3),
              "University of Duisburg-Essen  ·  Summer 2026",
              font=F_BODY, size=10, color=CREAM)
-    add_text(s, SW - Inches(1.5), SH - Inches(0.75), Inches(1), Inches(0.3),
-             "01", font=F_CODE, size=11, color=CORAL, align="right")
+    page_no(s, light=True)
 
 
 @slide
 def s02_agenda(s):
-    page_chrome(s, page_num=2, total=TOTAL, label="WHAT THE NEXT HOUR LOOKS LIKE")
+    page_chrome(s, label="WHAT THE NEXT HOUR LOOKS LIKE")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "An hour of theory and demos. Then three hours of doing.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -276,7 +291,7 @@ def s02_agenda(s):
 
 @slide
 def s03_demo_pomodoro(s):
-    page_chrome(s, page_num=3, total=TOTAL, label="DEMO 01  ·  HOOK")
+    page_chrome(s, label="DEMO 01  ·  HOOK")
     add_text(s, Inches(0.8), Inches(0.55), Inches(12), Inches(0.4),
              "From one paragraph to a working app, in under five minutes.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -310,7 +325,7 @@ def s03_demo_pomodoro(s):
 
 @slide
 def s04_demo_spec_plan_impl(s):
-    page_chrome(s, page_num=4, total=TOTAL, label="DEMO 02  ·  THE FULL CYCLE")
+    page_chrome(s, label="DEMO 02  ·  THE FULL CYCLE")
     add_text(s, Inches(0.8), Inches(0.55), Inches(12), Inches(0.4),
              "How production-ish features actually move through Claude Code.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -382,7 +397,7 @@ def s04_demo_spec_plan_impl(s):
 
 @slide
 def s05_demo_multi_agent(s):
-    page_chrome(s, page_num=5, total=TOTAL, label="DEMO 03  ·  ORCHESTRATION")
+    page_chrome(s, label="DEMO 03  ·  ORCHESTRATION")
     add_text(s, Inches(0.8), Inches(0.55), Inches(12), Inches(0.4),
              "One conversation. Three parallel investigators. Synthesized in seconds.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -397,7 +412,7 @@ def s05_demo_multi_agent(s):
 
 @slide
 def s06_demo_browser(s):
-    page_chrome(s, page_num=6, total=TOTAL, label="DEMO 04  ·  BEYOND THE TERMINAL")
+    page_chrome(s, label="DEMO 04  ·  BEYOND THE TERMINAL")
     add_text(s, Inches(0.8), Inches(0.55), Inches(12), Inches(0.4),
              "Claude Code drives a real browser — extraction, automation, admin.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -412,7 +427,7 @@ def s06_demo_browser(s):
 
 @slide
 def s07_demo_ml(s):
-    page_chrome(s, page_num=7, total=TOTAL, label="DEMO 05  ·  TRAINING A MODEL")
+    page_chrome(s, label="DEMO 05  ·  TRAINING A MODEL")
     add_text(s, Inches(0.8), Inches(0.55), Inches(12), Inches(0.4),
              "20-newsgroups, four topics. Claude scaffolds the pipeline; you read the numbers.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -427,7 +442,7 @@ def s07_demo_ml(s):
 
 @slide
 def s08_demo_second_brain(s):
-    page_chrome(s, page_num=8, total=TOTAL, label="DEMO 06  ·  THE SECOND BRAIN")
+    page_chrome(s, label="DEMO 06  ·  THE SECOND BRAIN")
     add_text(s, Inches(0.8), Inches(0.55), Inches(12), Inches(0.4),
              "Claude Code writes to your vault. Every session ends as a note.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -451,7 +466,7 @@ def s08_demo_second_brain(s):
 
 @slide
 def s09_the_thread(s):
-    page_chrome(s, page_num=9, total=TOTAL, label="WHAT THESE DEMOS HAVE IN COMMON")
+    page_chrome(s, label="WHAT THESE DEMOS HAVE IN COMMON")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Six demos. One shape.", font=F_HEAD, size=14, color=MUTED, italic=True)
     add_text(s, Inches(0.8), Inches(1.05), Inches(12), Inches(1),
@@ -490,21 +505,21 @@ def s10_transition(s):
     add_text(s, Inches(0.8), Inches(5.5), Inches(12), Inches(0.5),
              "The mindset → the workflow → the wider toolbox.",
              font=F_HEAD, size=18, color=CREAM)
-    dark_footer(s, 10, TOTAL, "")
+    dark_footer(s, label_left="")
 
 
 # -------- PART 2: MINDSET ----------
 
 @slide
 def s11_mindset_divider(s):
-    section_divider(s, page=11, total=TOTAL, label="PART 02",
+    section_divider(s, label="PART 02",
                     title="Vibecoding →\nAgentic Engineering.",
                     sub="A mindset shift, not a tool swap.")
 
 
 @slide
 def s12_the_premise(s):
-    page_chrome(s, page_num=12, total=TOTAL, label="THE PREMISE")
+    page_chrome(s, label="THE PREMISE")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "What the marketing says.", font=F_HEAD, size=14, color=MUTED, italic=True)
     add_text(s, Inches(0.8), Inches(1.05), Inches(12), Inches(1),
@@ -526,7 +541,7 @@ def s12_the_premise(s):
 
 @slide
 def s13_the_reality(s):
-    page_chrome(s, page_num=13, total=TOTAL, label="THE REALITY")
+    page_chrome(s, label="THE REALITY")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "What you ship if you stop there.", font=F_HEAD, size=14, color=MUTED, italic=True)
     add_text(s, Inches(0.8), Inches(1.05), Inches(12), Inches(1),
@@ -564,12 +579,11 @@ def s14_three_lies_intro(s):
     add_text(s, Inches(3.6), Inches(3.5), Inches(9), Inches(2),
              "Three lies AI coding\ntools tell us.",
              font=F_HEAD, size=46, color=WHITE, line_spacing=1.1)
-    dark_footer(s, 14, TOTAL, "")
+    dark_footer(s, label_left="")
 
 
-def _lie_slide(s, page, n, lie, rebuttal, discipline):
-    page_chrome(s, page_num=page, total=TOTAL,
-                label=f"THE THREE LIES  ·  {n} OF 3")
+def _lie_slide(s, n, lie, rebuttal, discipline):
+    page_chrome(s, label=f"THE THREE LIES  ·  {n} OF 3")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              f"LIE {n}", font=F_BODY, size=11, color=CORAL,
              bold=True, letter_spacing=400)
@@ -587,28 +601,28 @@ def _lie_slide(s, page, n, lie, rebuttal, discipline):
 
 @slide
 def s15_lie1(s):
-    _lie_slide(s, 15, 1, "It works.",
+    _lie_slide(s, 1, "It works.",
                "It looks like it works. The imports look right, the signature looks right, the README looks right.\n\nBut did anyone run it?",
                "Verification before done.")
 
 
 @slide
 def s16_lie2(s):
-    _lie_slide(s, 16, 2, "I understand.",
+    _lie_slide(s, 2, "I understand.",
                "It pattern-matched your keywords.\n\nIt may have grasped the surface. It rarely grasps the intent.",
                "Write a spec. Or make Claude write one — then review it.")
 
 
 @slide
 def s17_lie3(s):
-    _lie_slide(s, 17, 3, "I'm done.",
+    _lie_slide(s, 3, "I'm done.",
                "“Done” is a status, not a feeling. Done means the code is written, the tests pass, the output was seen — by you.",
                "Stop conditions. Show your work.")
 
 
 @slide
 def s18_rhythm(s):
-    page_chrome(s, page_num=18, total=TOTAL, label="THE RHYTHM")
+    page_chrome(s, label="THE RHYTHM")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "The five steps. In this order. Every time.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -647,14 +661,14 @@ def s18_rhythm(s):
 
 @slide
 def s19_workflow_divider(s):
-    section_divider(s, page=19, total=TOTAL, label="PART 03",
+    section_divider(s, label="PART 03",
                     title="Coding workflows.",
                     sub="Where the actual discipline lives.")
 
 
 @slide
 def s20_what_is_spec(s):
-    page_chrome(s, page_num=20, total=TOTAL, label="SPECIFICATIONS  ·  01 / 04")
+    page_chrome(s, label="SPECIFICATIONS  ·  01 / 04")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "A spec is not a wish list. It's a contract you can check.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -696,7 +710,7 @@ def s20_what_is_spec(s):
 
 @slide
 def s21_anatomy_spec(s):
-    page_chrome(s, page_num=21, total=TOTAL, label="SPECIFICATIONS  ·  02 / 04")
+    page_chrome(s, label="SPECIFICATIONS  ·  02 / 04")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Five elements. Always.", font=F_HEAD, size=14, color=MUTED, italic=True)
     add_text(s, Inches(0.8), Inches(1.05), Inches(12), Inches(1),
@@ -725,7 +739,7 @@ def s21_anatomy_spec(s):
 
 @slide
 def s22_capture_specs(s):
-    page_chrome(s, page_num=22, total=TOTAL, label="SPECIFICATIONS  ·  03 / 04")
+    page_chrome(s, label="SPECIFICATIONS  ·  03 / 04")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Clients give you wishes. You convert wishes into checkable criteria.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -752,7 +766,7 @@ def s22_capture_specs(s):
 
 @slide
 def s23_specs_persistent(s):
-    page_chrome(s, page_num=23, total=TOTAL, label="SPECIFICATIONS  ·  04 / 04")
+    page_chrome(s, label="SPECIFICATIONS  ·  04 / 04")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Code rots fastest. Specs rot slowest. Treat them accordingly.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -780,7 +794,7 @@ def s23_specs_persistent(s):
 
 @slide
 def s24_what_is_plan(s):
-    page_chrome(s, page_num=24, total=TOTAL, label="PLANS  ·  01 / 03")
+    page_chrome(s, label="PLANS  ·  01 / 03")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "The recipe between the spec and the code.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -814,7 +828,7 @@ def s24_what_is_plan(s):
 
 @slide
 def s25_anatomy_plan(s):
-    page_chrome(s, page_num=25, total=TOTAL, label="PLANS  ·  02 / 03")
+    page_chrome(s, label="PLANS  ·  02 / 03")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Five questions on every plan Claude proposes. Always.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -841,7 +855,7 @@ def s25_anatomy_plan(s):
 
 @slide
 def s26_plan_mode(s):
-    page_chrome(s, page_num=26, total=TOTAL, label="PLANS  ·  03 / 03")
+    page_chrome(s, label="PLANS  ·  03 / 03")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Plan mode = read-only exploration before any approval-gated change.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -874,7 +888,7 @@ def s26_plan_mode(s):
 
 @slide
 def s27_repo_setup(s):
-    page_chrome(s, page_num=27, total=TOTAL, label="REPO STRUCTURE")
+    page_chrome(s, label="REPO STRUCTURE")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "A layout Claude Code can navigate without guessing.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -914,7 +928,7 @@ def s27_repo_setup(s):
 
 @slide
 def s28_claude_md(s):
-    page_chrome(s, page_num=28, total=TOTAL, label="THE PERSISTENCE LAYER  ·  01 / 04")
+    page_chrome(s, label="THE PERSISTENCE LAYER  ·  01 / 04")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Read at session start. Sticks across every prompt. Keep it short.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -954,7 +968,7 @@ def s28_claude_md(s):
 
 @slide
 def s29_hooks(s):
-    page_chrome(s, page_num=29, total=TOTAL, label="THE PERSISTENCE LAYER  ·  02 / 04")
+    page_chrome(s, label="THE PERSISTENCE LAYER  ·  02 / 04")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "When 80% isn't good enough. Deterministic, every time.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -994,7 +1008,7 @@ def s29_hooks(s):
 
 @slide
 def s30_skills(s):
-    page_chrome(s, page_num=30, total=TOTAL, label="THE PERSISTENCE LAYER  ·  03 / 04")
+    page_chrome(s, label="THE PERSISTENCE LAYER  ·  03 / 04")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Two kinds: give Claude new abilities, or encode your taste.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1044,7 +1058,7 @@ def s30_skills(s):
 
 @slide
 def s31_mcp(s):
-    page_chrome(s, page_num=31, total=TOTAL, label="THE PERSISTENCE LAYER  ·  04 / 04")
+    page_chrome(s, label="THE PERSISTENCE LAYER  ·  04 / 04")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Claude can now act outside the terminal — through any MCP-speaking tool.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1085,7 +1099,7 @@ def s31_mcp(s):
 
 @slide
 def s32_unit_tests(s):
-    page_chrome(s, page_num=32, total=TOTAL, label="TESTING  ·  01 / 02")
+    page_chrome(s, label="TESTING  ·  01 / 02")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Tests aren't safety nets. They're the spec, executable.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1129,7 +1143,7 @@ def s32_unit_tests(s):
 
 @slide
 def s33_tdd(s):
-    page_chrome(s, page_num=33, total=TOTAL, label="TESTING  ·  02 / 02")
+    page_chrome(s, label="TESTING  ·  02 / 02")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Standard TDD. Just with Claude as the typist.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1157,7 +1171,7 @@ def s33_tdd(s):
 
 @slide
 def s34_playwright(s):
-    page_chrome(s, page_num=34, total=TOTAL, label="E2E TESTING")
+    page_chrome(s, label="E2E TESTING")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Web UI? Then Playwright tests, autogenerated from the spec.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1172,7 +1186,7 @@ def s34_playwright(s):
 
 @slide
 def s35_verify_properly(s):
-    page_chrome(s, page_num=35, total=TOTAL, label="VERIFICATION")
+    page_chrome(s, label="VERIFICATION")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Green tests are necessary. Not sufficient.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1199,7 +1213,7 @@ def s35_verify_properly(s):
 
 @slide
 def s36_iteration(s):
-    page_chrome(s, page_num=36, total=TOTAL, label="ITERATION CYCLES")
+    page_chrome(s, label="ITERATION CYCLES")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Feature by feature. Evidence each loop. No skipping.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1227,7 +1241,7 @@ def s36_iteration(s):
 
 @slide
 def s37_spec_drift(s):
-    page_chrome(s, page_num=37, total=TOTAL, label="SPEC DRIFT  ·  01 / 02")
+    page_chrome(s, label="SPEC DRIFT  ·  01 / 02")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "The silent project killer in agentic workflows.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1255,7 +1269,7 @@ def s37_spec_drift(s):
 
 @slide
 def s38_prevent_drift(s):
-    page_chrome(s, page_num=38, total=TOTAL, label="SPEC DRIFT  ·  02 / 02")
+    page_chrome(s, label="SPEC DRIFT  ·  02 / 02")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "The spec stays canonical. Plans regenerate against it.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1282,7 +1296,7 @@ def s38_prevent_drift(s):
 
 @slide
 def s39_orchestrator(s):
-    page_chrome(s, page_num=39, total=TOTAL, label="MULTI-AGENT  ·  01 / 02")
+    page_chrome(s, label="MULTI-AGENT  ·  01 / 02")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "One team lead. N subagents per feature. Verified handoffs.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1314,7 +1328,7 @@ def s39_orchestrator(s):
 
 @slide
 def s40_orch_vs_conductor(s):
-    page_chrome(s, page_num=40, total=TOTAL, label="MULTI-AGENT  ·  02 / 02")
+    page_chrome(s, label="MULTI-AGENT  ·  02 / 02")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Two patterns. Pick by the shape of the work.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1359,7 +1373,7 @@ def s40_orch_vs_conductor(s):
 
 @slide
 def s41_deployment(s):
-    page_chrome(s, page_num=41, total=TOTAL, label="DEPLOYMENT")
+    page_chrome(s, label="DEPLOYMENT")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "The verify gate has to keep working when you're not looking.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1401,7 +1415,7 @@ def s41_deployment(s):
 
 @slide
 def s42_production_checklist(s):
-    page_chrome(s, page_num=42, total=TOTAL, label="PRE-SHIP")
+    page_chrome(s, label="PRE-SHIP")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Eight items. Walk through them every time. No exceptions.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1431,14 +1445,14 @@ def s42_production_checklist(s):
 
 @slide
 def s43_beyond_divider(s):
-    section_divider(s, page=43, total=TOTAL, label="PART 04",
+    section_divider(s, label="PART 04",
                     title="Beyond coding.",
                     sub="Claude Code is an agent harness. Code is just one surface.")
 
 
 @slide
 def s44_harness_frame(s):
-    page_chrome(s, page_num=44, total=TOTAL, label="REFRAMING THE TOOL")
+    page_chrome(s, label="REFRAMING THE TOOL")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "It edits files. Also reads emails, opens browsers, writes notes, runs cron.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1469,7 +1483,7 @@ def s44_harness_frame(s):
 
 @slide
 def s45_pm(s):
-    page_chrome(s, page_num=45, total=TOTAL, label="BEYOND  ·  PROJECT MANAGEMENT")
+    page_chrome(s, label="BEYOND  ·  PROJECT MANAGEMENT")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "The PM work nobody actually wants to do. Delegate it.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1496,7 +1510,7 @@ def s45_pm(s):
 
 @slide
 def s46_automations(s):
-    page_chrome(s, page_num=46, total=TOTAL, label="BEYOND  ·  AUTOMATIONS")
+    page_chrome(s, label="BEYOND  ·  AUTOMATIONS")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Anything you do twice a week is a candidate.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1511,7 +1525,7 @@ def s46_automations(s):
 
 @slide
 def s47_browser_automation(s):
-    page_chrome(s, page_num=47, total=TOTAL, label="BEYOND  ·  BROWSER")
+    page_chrome(s, label="BEYOND  ·  BROWSER")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "The web is a UI. UIs are scriptable. So are people, occasionally.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1538,7 +1552,7 @@ def s47_browser_automation(s):
 
 @slide
 def s48_email(s):
-    page_chrome(s, page_num=48, total=TOTAL, label="BEYOND  ·  EMAIL + CALENDAR")
+    page_chrome(s, label="BEYOND  ·  EMAIL + CALENDAR")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Drafts, summaries, triage. You stay the final say.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1568,7 +1582,7 @@ def s48_email(s):
 
 @slide
 def s49_integrations(s):
-    page_chrome(s, page_num=49, total=TOTAL, label="BEYOND  ·  INTEGRATIONS")
+    page_chrome(s, label="BEYOND  ·  INTEGRATIONS")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Every MCP server is a verb Claude can use.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1602,7 +1616,7 @@ def s49_integrations(s):
 
 @slide
 def s50_second_brain(s):
-    page_chrome(s, page_num=50, total=TOTAL, label="BEYOND  ·  SECOND BRAIN")
+    page_chrome(s, label="BEYOND  ·  SECOND BRAIN")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Capture, distill, link. Your brain isn't a database — your vault is.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1633,7 +1647,7 @@ def s50_second_brain(s):
 
 @slide
 def s51_obsidian(s):
-    page_chrome(s, page_num=51, total=TOTAL, label="BEYOND  ·  OBSIDIAN + CLAUDE")
+    page_chrome(s, label="BEYOND  ·  OBSIDIAN + CLAUDE")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "A SessionEnd hook writes today's note. Tomorrow's session reads it.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1653,7 +1667,7 @@ def s51_obsidian(s):
 
 @slide
 def s52_daily_setup(s):
-    page_chrome(s, page_num=52, total=TOTAL, label="BEYOND  ·  THE SETUP")
+    page_chrome(s, label="BEYOND  ·  THE SETUP")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "What's running on my machine right now. Yours can look similar.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1682,7 +1696,7 @@ def s52_daily_setup(s):
 
 @slide
 def s53_non_coder(s):
-    page_chrome(s, page_num=53, total=TOTAL, label="BEYOND  ·  NON-CODE WORK")
+    page_chrome(s, label="BEYOND  ·  NON-CODE WORK")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Most of your job isn't writing code. Most of your code isn't writing code.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1720,22 +1734,21 @@ def s54_weekend_builds(s):
     add_text(s, Inches(0.8), Inches(5.5), Inches(12), Inches(0.5),
              "Spec it. Plan it. Test it. Ship it. By Sunday evening.",
              font=F_HEAD, size=22, color=CORAL, italic=True)
-    add_text(s, SW - Inches(1.5), SH - Inches(0.5), Inches(0.9), Inches(0.3),
-             "54 / 80", font=F_CODE, size=9, color=MUTED, align="right")
+    page_no(s)
 
 
 # -------- PART 5: AI/ML ----------
 
 @slide
 def s55_ml_divider(s):
-    section_divider(s, page=55, total=TOTAL, label="PART 05",
+    section_divider(s, label="PART 05",
                     title="AI engineering\nwith Claude Code.",
                     sub="Scaffold the pipeline. Read the numbers. Judge the model.")
 
 
 @slide
 def s56_ml_frame(s):
-    page_chrome(s, page_num=56, total=TOTAL, label="ML WITH CLAUDE  ·  FRAMING")
+    page_chrome(s, label="ML WITH CLAUDE  ·  FRAMING")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Claude doesn't invent new architectures. It wires up the boring parts.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1782,7 +1795,7 @@ def s56_ml_frame(s):
 
 @slide
 def s57_scaffolding(s):
-    page_chrome(s, page_num=57, total=TOTAL, label="ML WITH CLAUDE  ·  SCAFFOLDING")
+    page_chrome(s, label="ML WITH CLAUDE  ·  SCAFFOLDING")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "From “I have a CSV” to “I have a trained model with eval” — in 30 minutes.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1811,7 +1824,7 @@ def s57_scaffolding(s):
 
 @slide
 def s58_ml_demo_deep(s):
-    page_chrome(s, page_num=58, total=TOTAL, label="ML WITH CLAUDE  ·  THE NUMBERS")
+    page_chrome(s, label="ML WITH CLAUDE  ·  THE NUMBERS")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Real dataset. Real classifier. Real test accuracy.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1826,7 +1839,7 @@ def s58_ml_demo_deep(s):
 
 @slide
 def s59_training_walkthrough(s):
-    page_chrome(s, page_num=59, total=TOTAL, label="ML WITH CLAUDE  ·  READING OUTPUT")
+    page_chrome(s, label="ML WITH CLAUDE  ·  READING OUTPUT")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "What to look at. What to ignore.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1856,7 +1869,7 @@ def s59_training_walkthrough(s):
 
 @slide
 def s60_eval_harness(s):
-    page_chrome(s, page_num=60, total=TOTAL, label="ML WITH CLAUDE  ·  EVALUATION")
+    page_chrome(s, label="ML WITH CLAUDE  ·  EVALUATION")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "An eval harness is just a test suite for your model.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1883,7 +1896,7 @@ def s60_eval_harness(s):
 
 @slide
 def s61_rag(s):
-    page_chrome(s, page_num=61, total=TOTAL, label="ML WITH CLAUDE  ·  RAG")
+    page_chrome(s, label="ML WITH CLAUDE  ·  RAG")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "For most teams in 2026: RAG beats fine-tuning. Try it first.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1914,7 +1927,7 @@ def s61_rag(s):
 
 @slide
 def s62_finetune(s):
-    page_chrome(s, page_num=62, total=TOTAL, label="ML WITH CLAUDE  ·  FINE-TUNING")
+    page_chrome(s, label="ML WITH CLAUDE  ·  FINE-TUNING")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "When prompt + RAG aren't enough. Rare. But real.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1941,7 +1954,7 @@ def s62_finetune(s):
 
 @slide
 def s63_wrong_tool(s):
-    page_chrome(s, page_num=63, total=TOTAL, label="ML WITH CLAUDE  ·  WHEN NOT TO")
+    page_chrome(s, label="ML WITH CLAUDE  ·  WHEN NOT TO")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Most “we should train a model” problems aren't model problems.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -1978,22 +1991,21 @@ def s64_open_q(s):
     add_text(s, Inches(0.8), Inches(6.0), Inches(12), Inches(0.5),
              "Discuss with your buddy for two minutes.",
              font=F_HEAD, size=18, color=CORAL, italic=True)
-    add_text(s, SW - Inches(1.5), SH - Inches(0.5), Inches(0.9), Inches(0.3),
-             "64 / 80", font=F_CODE, size=9, color=MUTED, align="right")
+    page_no(s)
 
 
 # -------- PART 6: ECOSYSTEM ----------
 
 @slide
 def s65_eco_divider(s):
-    section_divider(s, page=65, total=TOTAL, label="PART 06",
+    section_divider(s, label="PART 06",
                     title="The wider toolbox.",
                     sub="Claude Code is one of many. Know the others.")
 
 
 @slide
 def s66_cursor(s):
-    page_chrome(s, page_num=66, total=TOTAL, label="ECOSYSTEM  ·  01 / 05")
+    page_chrome(s, label="ECOSYSTEM  ·  01 / 05")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "IDE-native. Fast. Parallel agent tabs.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2022,7 +2034,7 @@ def s66_cursor(s):
 
 @slide
 def s67_cline_codex_aider(s):
-    page_chrome(s, page_num=67, total=TOTAL, label="ECOSYSTEM  ·  02 / 05")
+    page_chrome(s, label="ECOSYSTEM  ·  02 / 05")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Open-source. Model-agnostic. Bring your own provider.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2066,7 +2078,7 @@ def s67_cline_codex_aider(s):
 
 @slide
 def s68_routines(s):
-    page_chrome(s, page_num=68, total=TOTAL, label="ECOSYSTEM  ·  03 / 05")
+    page_chrome(s, label="ECOSYSTEM  ·  03 / 05")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Anthropic's “supervised autonomous” mode. The future of overnight work.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2093,7 +2105,7 @@ def s68_routines(s):
 
 @slide
 def s69_decision_matrix(s):
-    page_chrome(s, page_num=69, total=TOTAL, label="ECOSYSTEM  ·  04 / 05")
+    page_chrome(s, label="ECOSYSTEM  ·  04 / 05")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Quick decision matrix. Read it once, internalise.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2134,7 +2146,7 @@ def s69_decision_matrix(s):
 
 @slide
 def s70_whats_coming(s):
-    page_chrome(s, page_num=70, total=TOTAL, label="ECOSYSTEM  ·  05 / 05")
+    page_chrome(s, label="ECOSYSTEM  ·  05 / 05")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Where this is going, late 2026 and beyond.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2167,22 +2179,25 @@ def s70_whats_coming(s):
 
 @slide
 def s71_handson_divider(s):
-    section_divider(s, page=71, total=TOTAL, label="PART 07",
+    section_divider(s, label="PART 07",
                     title="Your turn.",
                     sub="Three hours. The repo. Pair up. Go deep.")
 
 
 @slide
 def s72_the_repo(s):
-    page_chrome(s, page_num=72, total=TOTAL, label="HANDS-ON  ·  THE REPO")
+    page_chrome(s, label="HANDS-ON  ·  THE REPO")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Everything from today, plus the demos, plus the exercises.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
     add_text(s, Inches(0.8), Inches(1.05), Inches(12), Inches(1),
              "Clone this.", font=F_HEAD, size=44, color=NAVY)
-    code_block(s, Inches(0.8), Inches(2.5), Inches(11.7), Inches(2.6),
+
+    # Left: clone command + check.sh output
+    code_block(s, Inches(0.8), Inches(2.5), Inches(7.2), Inches(3.8),
                [("$ git clone \\", CODE_FG),
-                ("    https://github.com/Place-Beyond-Bytes/pbb-vibecoding-masterclass.git", CORAL),
+                ("    github.com/Place-Beyond-Bytes/", CORAL),
+                ("    pbb-vibecoding-masterclass.git", CORAL),
                 ("$ cd pbb-vibecoding-masterclass", CODE_FG),
                 ("$ bash check.sh", CODE_FG),
                 ("", CODE_FG),
@@ -2192,15 +2207,28 @@ def s72_the_repo(s):
                 ("  ✓ api.anthropic.com reachable", CODE_GRN),
                 ("", CODE_FG),
                 ("  All good. See you on the day.", CODE_GRN)],
-               size=14)
-    add_text(s, Inches(0.8), Inches(5.5), Inches(12), Inches(0.4),
-             "If check.sh isn't green, raise your hand. Your buddy starts without you.",
-             font=F_HEAD, size=14, color=CORAL, italic=True)
+               size=13)
+
+    # Right: QR code with caption
+    add_text(s, Inches(8.4), Inches(2.5), Inches(4.2), Inches(0.4),
+             "OR SCAN", font=F_BODY, size=10, color=CORAL,
+             bold=True, letter_spacing=300)
+    qr = HERE / "assets" / "screens" / "repo-qr.png"
+    if qr.exists():
+        s.shapes.add_picture(str(qr), Inches(8.6), Inches(2.9),
+                             width=Inches(3.4), height=Inches(3.4))
+    add_text(s, Inches(8.4), Inches(6.35), Inches(4.2), Inches(0.3),
+             "github.com/Place-Beyond-Bytes/pbb-vibecoding-masterclass",
+             font=F_CODE, size=9, color=MUTED, align="center")
+
+    add_text(s, Inches(0.8), Inches(6.55), Inches(7.5), Inches(0.4),
+             "If check.sh isn\'t green, raise your hand. Buddy starts without you.",
+             font=F_HEAD, size=13, color=CORAL, italic=True)
 
 
 @slide
 def s73_exercises(s):
-    page_chrome(s, page_num=73, total=TOTAL, label="HANDS-ON  ·  EXERCISES")
+    page_chrome(s, label="HANDS-ON  ·  EXERCISES")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Ten exercises. Work in order until the break, then mix freely.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2235,7 +2263,7 @@ def s73_exercises(s):
 
 @slide
 def s74_pair_up(s):
-    page_chrome(s, page_num=74, total=TOTAL, label="HANDS-ON  ·  PAIR UP")
+    page_chrome(s, label="HANDS-ON  ·  PAIR UP")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Mixed pairs. High-experience with low. Buddy stays for the day.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2261,7 +2289,7 @@ def s74_pair_up(s):
 
 @slide
 def s75_house_rules(s):
-    page_chrome(s, page_num=75, total=TOTAL, label="HANDS-ON  ·  HOUSE RULES")
+    page_chrome(s, label="HANDS-ON  ·  HOUSE RULES")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "On the wall the whole time. Live by them today.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2293,14 +2321,14 @@ def s76_go(s):
              bold=True, letter_spacing=400)
     add_text(s, Inches(0.8), Inches(2.5), Inches(12), Inches(4),
              "Go.", font=F_HEAD, size=220, color=WHITE, italic=True)
-    dark_footer(s, 76, TOTAL, "")
+    dark_footer(s, label_left="")
 
 
 # -------- PART 8: CLOSE ----------
 
 @slide
 def s77_recap_rhythm(s):
-    page_chrome(s, page_num=77, total=TOTAL, label="WRAP-UP  ·  THE RHYTHM")
+    page_chrome(s, label="WRAP-UP  ·  THE RHYTHM")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "If you take one thing home, take this.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2329,7 +2357,7 @@ def s77_recap_rhythm(s):
 
 @slide
 def s78_when_not(s):
-    page_chrome(s, page_num=78, total=TOTAL, label="WRAP-UP  ·  HONESTY")
+    page_chrome(s, label="WRAP-UP  ·  HONESTY")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "We spent today on the right way. Here's the other half.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2356,7 +2384,7 @@ def s78_when_not(s):
 
 @slide
 def s79_resources(s):
-    page_chrome(s, page_num=79, total=TOTAL, label="WRAP-UP  ·  TAKE WITH YOU")
+    page_chrome(s, label="WRAP-UP  ·  TAKE WITH YOU")
     add_text(s, Inches(0.8), Inches(0.7), Inches(12), Inches(0.4),
              "Bookmark these. Office hours open for two weeks.",
              font=F_HEAD, size=14, color=MUTED, italic=True)
@@ -2407,8 +2435,7 @@ def s80_close(s):
     add_text(s, Inches(0.8), SH - Inches(0.55), Inches(9), Inches(0.35),
              "ELIAS JELINEK  ·  PLACE BEYOND BYTES  ·  SUST  ·  UDE",
              font=F_BODY, size=8, color=DIM_LIGHT, letter_spacing=200)
-    add_text(s, SW - Inches(1.5), SH - Inches(0.55), Inches(0.9), Inches(0.3),
-             "80 / 80", font=F_CODE, size=9, color=DIM_LIGHT, align="right")
+    page_no(s, light=True)
 
 
 # ============================================================
@@ -2417,7 +2444,9 @@ TOTAL = len(SLIDES)
 
 
 def main():
-    for build in SLIDES:
+    global CURRENT_PAGE
+    for idx, build in enumerate(SLIDES, start=1):
+        CURRENT_PAGE = idx
         s = prs.slides.add_slide(blank_layout)
         build(s)
     prs.save(OUT)
