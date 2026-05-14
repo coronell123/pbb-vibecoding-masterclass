@@ -1,0 +1,28 @@
+  Loading 20-newsgroups subset (4 topics)...
+  Train: 2323 docs  ·  Test: 1546 docs
+  Classes: graphics, hockey, space, guns
+
+  Training...
+
+  Test accuracy:  0.895
+
+  Confusion matrix (rows = actual, columns = predicted):
+             graphics    hockey     space      guns
+    graphics       353         3        28         5
+      hockey         4       369        15        11
+       space        23         7       346        18
+        guns        13         2        34       315
+
+  Per-class report:
+                        precision    recall  f1-score   support
+    
+         comp.graphics       0.90      0.91      0.90       389
+      rec.sport.hockey       0.97      0.92      0.95       399
+             sci.space       0.82      0.88      0.85       394
+    talk.politics.guns       0.90      0.87      0.88       364
+    
+              accuracy                           0.89      1546
+             macro avg       0.90      0.89      0.89      1546
+          weighted avg       0.90      0.89      0.90      1546
+
+  Saved metrics to results.json

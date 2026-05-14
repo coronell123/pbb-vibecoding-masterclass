@@ -1,0 +1,23 @@
+~/Documents/Obsidian Vault/
+├── 00-Inbox/
+│   └── Inbox.md
+├── 01-Projects/
+│   ├── Vibecoding Masterclass.md
+│   ├── Inexogy Invoice Service.md
+│   └── ECIS 2026 Paper.md
+├── 03-Knowledge/
+│   ├── Spec-Driven Development.md
+│   ├── Multi-Agent Patterns.md
+│   └── Claude Code Hooks.md
+├── 04-People/
+│   ├── Mahnoor Shah.md
+│   └── Khan, Güzey, Nielsen.md
+├── 05-Meetings/
+│   └── 2026-05-14 SUST Triannual.md
+├── 08-Sessions/
+│   ├── 2026-05-14 Inbox.md         ← AUTO-GENERATED
+│   ├── 2026-05-13 Forderung.md     ← AUTO-GENERATED
+│   └── 2026-05-12 Aktivbank.md     ← AUTO-GENERATED
+└── .claude/
+    └── hooks/
+        └── session-end.sh           ← writes today's session note

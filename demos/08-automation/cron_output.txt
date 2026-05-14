@@ -1,0 +1,38 @@
+$ crontab -l
+# Vibecoding daily automation
+0  6  *  *  *   ~/.bin/digest.sh          >> ~/.log/digest.log 2>&1
+0  18 *  *  *   ~/.bin/standup-prep.sh    >> ~/.log/standup.log 2>&1
+
+$ tail ~/.log/digest.log
+
+2026-05-14 06:00  digest started
+2026-05-14 06:00  scanning 27 new PDFs in ~/Drop/inbox/
+2026-05-14 06:01  claude → summarise each ≤120 words
+2026-05-14 06:01  claude → tag by topic, link related notes
+2026-05-14 06:02  wrote 27 notes to ~/Vault/00-Inbox/digests/
+2026-05-14 06:02  emailed daily digest to elias@quershift.com
+2026-05-14 06:02  digest done in 2m 14s
+
+
+$ head -25 ~/Vault/00-Inbox/digests/2026-05-14.md
+---
+type: digest
+date: 2026-05-14
+items: 27
+---
+
+## Today's reading
+
+  • 3 papers on spec-driven LLM eval
+  • 4 invoices to triage (~/Drop/inbox/Pascal/)
+  • 1 contract draft from David — needs legal review
+  • 2 thesis chapters from Jule — feedback requested by Fri
+
+## Top three to read first
+
+  1. "Spec-Driven Generation" (arXiv 2605.04780) — Park, Iyer, Schmidt
+     → relates to [[Vibecoding Masterclass]] Block 02
+  2. Pascal-Rechnung March-2026.pdf
+     → matches [[Inexogy Invoice Service]] field schema
+  3. David-Vertrag-v3.docx
+     → diff vs v2 attached, 4 substantive changes

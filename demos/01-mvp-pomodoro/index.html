@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Pomodoro — vibe-built in 5 min</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --navy: #14213D;
+      --cream: #FAF7F0;
+      --coral: #E8761B;
+      --ink: #1A1A1A;
+      --muted: #6B6B6B;
+      --rule: #E5E0D5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+    .card {
+      background: white;
+      padding: 3rem 3.5rem;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 1px 0 var(--rule);
+      border-top: 4px solid var(--coral);
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: var(--navy);
+      font-style: italic;
+      margin-bottom: .25rem;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .timer {
+      font-family: "Consolas", "Menlo", monospace;
+      font-size: 5.5rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      text-align: center;
+      margin: 1rem 0 1.5rem;
+      color: var(--navy);
+    }
+    .timer.running { color: var(--coral); }
+    .mode {
+      text-align: center;
+      letter-spacing: .25em;
+      font-size: .78rem;
+      color: var(--coral);
+      font-weight: 700;
+      font-family: -apple-system, sans-serif;
+      margin-bottom: 2rem;
+    }
+    .controls {
+      display: flex;
+      gap: .75rem;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+    button {
+      font-family: -apple-system, sans-serif;
+      padding: .75rem 1.5rem;
+      font-size: .9rem;
+      letter-spacing: .1em;
+      font-weight: 600;
+      border: 1px solid var(--navy);
+      background: white;
+      color: var(--navy);
+      cursor: pointer;
+      transition: .15s;
+    }
+    button.primary {
+      background: var(--navy);
+      color: white;
+    }
+    button.primary:hover { background: var(--coral); border-color: var(--coral); }
+    button:hover { background: var(--cream); }
+    .stats {
+      border-top: 1px solid var(--rule);
+      padding-top: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      text-align: center;
+    }
+    .stat .num {
+      font-family: Georgia, serif;
+      font-size: 2rem;
+      color: var(--navy);
+      font-style: italic;
+    }
+    .stat .lab {
+      font-size: .7rem;
+      letter-spacing: .2em;
+      color: var(--muted);
+      font-family: -apple-system, sans-serif;
+      font-weight: 600;
+      margin-top: .25rem;
+    }
+    .recent {
+      margin-top: 2rem;
+      font-size: .8rem;
+      color: var(--muted);
+      text-align: center;
+      font-family: -apple-system, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Pomodoro.</h1>
+    <p class="sub">25 minutes of focus, 5 minutes of rest. Tracked.</p>
+
+    <div class="mode" id="mode">FOCUS</div>
+    <div class="timer" id="timer">25:00</div>
+
+    <div class="controls">
+      <button id="start" class="primary">START</button>
+      <button id="pause">PAUSE</button>
+      <button id="reset">RESET</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="num" id="today">0</div>
+        <div class="lab">Today</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="streak">0</div>
+        <div class="lab">Streak</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="total">0</div>
+        <div class="lab">Total</div>
+      </div>
+    </div>
+
+    <div class="recent" id="recent">No sessions yet.</div>
+  </div>
+
+  <script>
+    const FOCUS = 25 * 60;
+    const REST = 5 * 60;
+    let mode = "FOCUS";
+    let remaining = FOCUS;
+    let running = false;
+    let tick = null;
+    const $ = id => document.getElementById(id);
+
+    function format(s) {
+      const m = Math.floor(s / 60).toString().padStart(2, "0");
+      const r = (s % 60).toString().padStart(2, "0");
+      return `${m}:${r}`;
+    }
+
+    function render() {
+      $("timer").textContent = format(remaining);
+      $("timer").classList.toggle("running", running);
+      $("mode").textContent = mode;
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      tick = setInterval(() => {
+        remaining--;
+        render();
+        if (remaining <= 0) {
+          clearInterval(tick);
+          running = false;
+          if (mode === "FOCUS") logSession();
+          mode = mode === "FOCUS" ? "REST" : "FOCUS";
+          remaining = mode === "FOCUS" ? FOCUS : REST;
+          render();
+        }
+      }, 1000);
+      render();
+    }
+
+    function pause() {
+      running = false;
+      clearInterval(tick);
+      render();
+    }
+
+    function reset() {
+      running = false;
+      clearInterval(tick);
+      mode = "FOCUS";
+      remaining = FOCUS;
+      render();
+    }
+
+    function logSession() {
+      const log = JSON.parse(localStorage.getItem("pomo.log") || "[]");
+      log.push({ ts: Date.now() });
+      localStorage.setItem("pomo.log", JSON.stringify(log));
+      updateStats();
+    }
+
+    function updateStats() {
+      const log = JSON.parse(localStorage.getItem("pomo.log") || "[]");
+      const today = new Date().toDateString();
+      const todayCount = log.filter(s => new Date(s.ts).toDateString() === today).length;
+      $("today").textContent = todayCount;
+      $("total").textContent = log.length;
+      // streak: consecutive days with at least one session
+      const days = new Set(log.map(s => new Date(s.ts).toDateString()));
+      let streak = 0;
+      let d = new Date();
+      while (days.has(d.toDateString())) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+      }
+      $("streak").textContent = streak;
+      if (log.length) {
+        const last = new Date(log[log.length - 1].ts);
+        $("recent").textContent = `Last session: ${last.toLocaleString()}`;
+      }
+    }
+
+    $("start").addEventListener("click", start);
+    $("pause").addEventListener("click", pause);
+    $("reset").addEventListener("click", reset);
+    render();
+    updateStats();
+  </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+> claude
+
+You: Open arxiv.org/list/cs.AI/recent in Chrome. Extract the top 5 paper
+     titles with their submission dates. Output as JSON.
+
+[claude] Using Chrome MCP...
+
+  ✓ tab_create  https://arxiv.org/list/cs.AI/recent
+  ✓ get_page_text                                 (1.2s)
+  ✓ extracted 5 entries
+
+[
+  {
+    "title": "Direct Preference Optimization for Code Agents",
+    "authors": "Wang, Chen, Müller",
+    "submitted": "2026-05-13",
+    "id": "2605.04812"
+  },
+  {
+    "title": "Spec-Driven Generation: A Survey of Production Workflows",
+    "authors": "Park, Iyer, Schmidt",
+    "submitted": "2026-05-13",
+    "id": "2605.04780"
+  },
+  {
+    "title": "Verified Subagent Composition in Multi-Agent Coding Systems",
+    "authors": "Garcia, Liu",
+    "submitted": "2026-05-12",
+    "id": "2605.04699"
+  },
+  {
+    "title": "Beyond Vibe Coding: An Engineering Discipline for AI-Assisted Dev",
+    "authors": "Nakamura, Patel, Roy",
+    "submitted": "2026-05-12",
+    "id": "2605.04655"
+  },
+  {
+    "title": "Retrieval-Augmented Code Editing at Repository Scale",
+    "authors": "Yang, O'Brien",
+    "submitted": "2026-05-11",
+    "id": "2605.04602"
+  }
+]

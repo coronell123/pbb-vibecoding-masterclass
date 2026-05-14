@@ -1,0 +1,16 @@
+# Synthetic grocery receipts — Vibecoding Workshop sample data
+# Format: date;shop;item;price;currency
+2026-04-12;REWE;Milk 1L;1,49;EUR
+2026-04-12;REWE;Bread;2,29;EUR
+2026-04-12;rewe;Eggs 10pk;3,19;EUR
+2026-04-13;ALDI;Pasta 500g;0,89;EUR
+2026-04-13;ALDI;Tomato sauce;1,19;EUR
+2026-04-14;Edeka;Coffee 250g;5,99;EUR
+2026-04-14;EDEKA;Butter;2,49;EUR
+2026-04-15;REWE;Apples 1kg;2,99;EUR
+2026-04-15;REWE;Bananas 1kg;1,69;EUR
+2026-04-16;DM;Toothpaste;1,95;EUR
+2026-04-16;DM;Soap;0,79;EUR
+INVALID-ROW;will;be;skipped;ok
+2026-04-17;REWE;Yoghurt 4pk;1,99;EUR
+2026-04-18;ALDI;Chocolate;1,79;EUR
