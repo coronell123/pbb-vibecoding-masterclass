@@ -8,6 +8,8 @@ from _new_slides import (
     sH_what_harness, sI_lifecycle, sJ_discussion_open,
     sK_discussion_workflows, sL_discussion_beyond, sM_discussion_ecosystem,
     sN_outcome_plan_mode, sO_outcome_hooks,
+    sP_e2e_workflow, sQ_docker_pattern, sR_maintain_observe,
+    sS_ml_frame, sT_ml_plan,
 )
 
 
@@ -27,9 +29,11 @@ def insert_after(target, new_fns):
 
 
 # Splice in order (later insertions don't shift earlier-positioned slides)
+insert_after("s77_recap_rhythm",        [sS_ml_frame, sT_ml_plan])
 insert_after("s70_whats_coming",        [sM_discussion_ecosystem])
 insert_after("s54_weekend_builds",      [sL_discussion_beyond])
 insert_after("s42_production_checklist", [sK_discussion_workflows])
+insert_after("s41_deployment",          [sP_e2e_workflow, sQ_docker_pattern, sR_maintain_observe])
 insert_after("s29_hooks",               [sO_outcome_hooks])
 insert_after("s26_plan_mode",           [sN_outcome_plan_mode])
 insert_after("s02_agenda",              [sB_what_we_build, sC_what_vibe, sD_what_agentic,

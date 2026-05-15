@@ -2196,7 +2196,7 @@ def s72_the_repo(s):
     # Left: clone command + check.sh output
     code_block(s, Inches(0.8), Inches(2.5), Inches(7.2), Inches(3.8),
                [("$ git clone \\", CODE_FG),
-                ("    github.com/Place-Beyond-Bytes/", CORAL),
+                ("    github.com/coronell123/", CORAL),
                 ("    pbb-vibecoding-masterclass.git", CORAL),
                 ("$ cd pbb-vibecoding-masterclass", CODE_FG),
                 ("$ bash check.sh", CODE_FG),
